@@ -1,0 +1,10 @@
+secretsprovider: azurekeyvault://hi3g-kv-dev-karna-3se.vault.azure.net/keys/pulumi-encryption-key
+encryptedkey: Yjd4ZVEtQV85V2VLdzlCdTZUY2V5aU9uaW01QnVzc3ZQOUJXWlgxQjRYaVBXcExJcS1TTUplTlJfcUlMQVFxRzk4d1FxWmhTUktoX1M0dURTTk5XNndSdDdqdDVMUDdMZEY1R1ZQdXV4QXZIQkZpMXdTLXkyWGhPOG9QcGlPNG9EVTNlSHk3NHYwZFc3TjNDVHZ4b2VPUlB5QkphY3FjVkoyNkZaWXF5ekx5VUw3RGtTbjNZcmwtUzRWT1JiZ2lLQW9KVm1zSjVOa2RzSEk1eVZ1QVkxWmw4T2I3SUZvUklnSEhSUHRSeUM4cDBxLVlhakxyTGIyLWF3ZmpiYWxYMTN2Y2RFemtKUFRUT0U4OEx0cnBPQU1LMkhyWTF0akl3bWtYWUNYZWxjcHAwdXBaZXk5UTY5RXZZeHA4eHdMbWJHb3J6WjRvM19nMW1PbDFTcUwweGpB
+config:
+  azure:clientId: 56c9a111-44d0-4fae-be0b-ff8aa93f133d
+  azure:clientSecret:
+    secure: v1:96VFyDRfr/Qq0VH8:MZrAIybytIsyVRPpQp7Yl3augbb+cvLoAqRSj6AsjxdnJUPyufMU9n6Qfda9RErYeSc=
+  azure:environment: public
+  azure:location: WestEurope
+  azure:subscriptionId: 9b31b157-221f-4439-855f-802897026654
+  azure:tenantId: d3d38dff-f85c-4026-842d-c215eb6b3560

@@ -1,0 +1,4 @@
+**/scripts/sp.json
+.history/
+node_modules/
+bin/

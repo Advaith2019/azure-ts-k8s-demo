@@ -1,0 +1,22 @@
+secretsprovider: azurekeyvault://hi3g-kv-dev-karna-3se.vault.azure.net/keys/pulumi-encryption-key
+encryptedkey: VlJwZTBwX1NzdGt2elZpbVpHZVZQeV9xRjE0UktROHp6Y3hrT3VEZGV1REFfZGxCcXExTVlUa184ZXlPbW9fcVpsbjdfdWFKaExNLS0talZYdHJpT0R6RDFMdzZDQVl0S24yeDVuQS1XcU9iUWpYa184SEZ2M1VHN0dydzlMYUlhU09iZlhFSnFURWlTckZ2NVIwcUFCMXlldGNyM1pkbU8xV2N1b3NTZ0d4UVBaTHpXaU1jeS05M3c2Yzd0MmxwN1NrcVhyZFdlVkhnMWJkWVJlTHIwbFJsd3paTFlCSW16VkxiOHZURnh3bDRhdmxseUtPRzludUlwX1F5cmp4Q1Z4aE16VWhacllVZ25Sc3lyTFhBcTNKWE5VeHBPdWdmWVc1LU1ka2xfWVU3WEMtRkFyM3B4SHdReDdBZG4xcnZuTHdjWmh3NE9PeWt3cFpMdHlXVWp3
+config:
+  app-services:ingress-nginx:
+    loadBalancerIP: 10.4.1.254
+    name: ingress-nginx
+    repo: https://kubernetes.github.io/ingress-nginx
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 1G
+      requests:
+        cpu: 500m
+        memory: 512Mi
+    version: 3.22.0
+  azure:clientId: 56c9a111-44d0-4fae-be0b-ff8aa93f133d
+  azure:clientSecret:
+    secure: v1:bDfUK7xwf3jEoQUc:do+4t15yAVuI/tSehgDK+t1/xFPjONR8gXeMlBgkvePjRo4UGwcmFYD3s3N4dEmmJBk=
+  azure:environment: public
+  azure:location: WestEurope
+  azure:subscriptionId: 9b31b157-221f-4439-855f-802897026654
+  azure:tenantId: d3d38dff-f85c-4026-842d-c215eb6b3560

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: private-reg
+  namespace: cloud-infra
+spec:
+  containers:
+  - name: private-reg-container
+    image: acrdev3se.azurecr.io/node-app:v1.0.0
+  imagePullSecrets:
+    - name: regcredent

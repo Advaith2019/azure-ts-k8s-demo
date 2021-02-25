@@ -1,0 +1,23 @@
+secretsprovider: azurekeyvault://hi3g-kv-dev-karna-3se.vault.azure.net/keys/pulumi-encryption-key
+encryptedkey: RGtxYU5tM2t6MnF6WWtycE5OSkdZejdJb2tFa2FCTW04dmN5ZWhQVFFrUk9DTlp3SlhtVnhFaWN2REM1dkFJXzNvakhHbHFHbXVfNXFUUWNITXZtQnc5dERQc0E2dUFRaC02R2J6SDZ0SmhrV1dTZS1fYmZZMTByUVhhQkNyd2hzd09UdnJIS3haVzg1VjRDVERNU2pDTnotcmJ5S1E1a25tb242NE9DN3locWd4THlGelF5Vm9NdHgtemNZRGRhWFRPcTRXVk42OUhEeUo0ZGhvSTNRbEtRSktBU0xycEtzNC1ja0V0R1E1cFlXSnFUT0RfQi1ZQWxZbE9rZ1d1RmFTN1pFN05FaEJQaXVjTnV5YlVqUFN0MlJQT0M3dW9rdnhYM05GakRiY19JZ3p5WTZJVkZWU3lLbjA5MTY0NjgtSkRVQm15dUI3VzJLQjZRWDMxVE9B
+config:
+  aks:cluster:
+    agentPoolProfile:
+      enableAutoScaling: true
+      enableNodePublicIp: false
+      maxCount: 3
+      maxPods: 30
+      minCount: 1
+      nodeCount: 1
+      osDiskSizeGb: 100
+      vmSize: Standard_F8s_v2
+    kubernetesVersion: 1.18.14
+    networkProfile:
+      loadBalancerSku: basic
+  azure:clientId: 56c9a111-44d0-4fae-be0b-ff8aa93f133d
+  azure:clientSecret:
+    secure: v1:eWzJcfVS7gjKj/Fq:FsqSunA7nJtSKBSdmmnZzNK1rHtB/q6NKe6fxIu0Wh8IfKqyjksRxSbmSvllXo4FcOQ=
+  azure:environment: public
+  azure:location: WestEurope
+  azure:subscriptionId: 9b31b157-221f-4439-855f-802897026654
+  azure:tenantId: d3d38dff-f85c-4026-842d-c215eb6b3560
