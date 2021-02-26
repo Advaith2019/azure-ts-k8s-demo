@@ -1,7 +1,159 @@
+
+docker: &docker-config
+  docker:
+    - image: 'circleci/node:10'
+  working_directory: ~/azure-ts-k8s-demo/
+
+master_filters: &master_filters
+  branches:
+    only:
+    - master
+
+feature_filters: &feature_filters
+  branches:
+    ignore:
+    - master
+
 version: 2.1
+commands:
+  update-azure-resource:
+    description: "Provision AKS Resources"
+    parameters:
+      project:
+        type: string
+      stack:
+        type: string
+      dryrun:
+        type: boolean
+    steps:
+      - when:
+          condition: << parameters.dryrun >>
+          steps:
+            - pulumi/preview:
+                stack: << parameters.stack >>
+                working_directory: ~/azure-ts-k8s-demo/<< parameters.project >>
+      - unless:
+          condition: << parameters.dryrun >>
+          steps:
+            - pulumi/update:
+                stack: << parameters.stack >>
+                working_directory: ~/azure-ts-k8s-demo/<< parameters.project >>
+
 orbs:
-  node: circleci/node@3.0.0
+  pulumi: pulumi/pulumi@2.0.0
+  azure-cli: circleci/azure-cli@1.0.0
+
+jobs:
+  checkout:
+    <<: *docker-config
+    steps:
+      - checkout
+      - save_cache:
+          key: repo-cache-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+           - ~/azure-ts-k8s-demo
+  install:
+    <<: *docker-config
+    steps:
+      - restore_cache:
+          keys:
+            - repo-cache-{{ .Environment.CIRCLE_SHA1 }}
+            - repo-yarn-dependencies-{{ checksum "yarn.lock" }}
+      - run: yarn install
+      - run: yarn bootstrap
+      - save_cache:
+          name: "Saving yarn dependencies to cache"
+          key: repo-yarn-dependencies-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+      - save_cache:
+          paths:
+            - ~/azure-ts-k8s-demo
+          key: repo-cache-{{ .Environment.CIRCLE_SHA1 }}-installed
+  deploy-k8s-resource:
+    parameters:
+      env:
+        description: "Which environment to spin up?"
+        default: "dev"
+        type: string
+      dryrun:
+        description: "Do you want to dry-run your deployment?"
+        default: true
+        type: boolean
+    <<: *docker-config
+    steps:
+      - azure-cli/install
+      - run:
+          name: Install helm
+          command: sudo curl -L https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+      - restore_cache:
+          key: repo-cache-{{ .Environment.CIRCLE_SHA1 }}-installed
+      - run:
+          name: "Login to Azure"
+          command: |
+            cd resource-group
+            . ../scripts/init.sh << parameters.env >> CircleCI
+            ENVIRONMENT=<< parameters.env >>
+            echo "export ENV=$ENVIRONMENT" >> $BASH_ENV
+            source $BASH_ENV
+      - pulumi/login:
+          version: latest    
+          cloud-url: azblob://pskarna${ENV}3se
+      - run:
+          name: Whitelist IP
+          command: |
+            cd resource-group
+            ../scripts/network-rule.sh add << parameters.env >> CircleCI
+      - run:
+          name: "Install pulumi plugins"
+          command: | 
+            pulumi plugin install resource azure v3.20.1
+            pulumi plugin install resource kubernetes v2.6.0
+      - update-azure-resource:
+         project: resource-group
+         stack: resource-group-<< parameters.env >>
+         dryrun: << parameters.dryrun >>
+      - update-azure-resource:
+         project: network
+         stack: network-<< parameters.env >>
+         dryrun: << parameters.dryrun >>
+      - update-azure-resource:
+          project: aks
+          stack: aks-<< parameters.env >>
+          dryrun: << parameters.dryrun >>
+      - update-azure-resource:
+         project: app-services
+         stack: app-services-<< parameters.env >>       
+         dryrun: << parameters.dryrun >>
+      - update-azure-resource:
+         project: apps
+         stack: apps-<< parameters.env >>
+         dryrun: << parameters.dryrun >>
+      - run:
+          name: Remove Whitelisted IP
+          command: |
+            cd resource-group
+            ../scripts/network-rule.sh remove << parameters.env >> CircleCI
+          when: always  
 workflows:
-  node-tests:
+  version: 2
+  deploy-k8s-resources:
     jobs:
-      - node/test
+    - checkout
+    - install: 
+        requires:
+        - checkout
+    - deploy-k8s-resource:
+        name: dryrun-k8s-deploy-dev
+        env: dev
+        filters: *feature_filters
+        dryrun: true
+        requires:
+        - install
+    - deploy-k8s-resource:
+        name: k8s-deploy-dev
+        env: dev
+        filters: *master_filters
+        dryrun: false
+        requires:
+        - install
