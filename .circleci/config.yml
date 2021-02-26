@@ -105,9 +105,6 @@ jobs:
           command: |
             cd resource-group
             . ../scripts/init.sh << parameters.env >> CircleCI
-            ENVIRONMENT=<< parameters.env >>
-            echo "export ENV=$ENVIRONMENT" >> $BASH_ENV
-            source $BASH_ENV
       - pulumi/login:
           version: latest    
           cloud-url: azblob://pskarna${ENV}3se
