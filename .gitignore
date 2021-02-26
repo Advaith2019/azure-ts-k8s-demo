@@ -1,4 +1,5 @@
 **/scripts/sp.json
+**/scripts/ip-address.txt
 .history/
 node_modules/
 bin/
