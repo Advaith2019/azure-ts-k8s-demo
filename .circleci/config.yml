@@ -26,6 +26,20 @@ commands:
       dryrun:
         type: boolean
     steps:
+      - restore_cache:
+              keys:
+                - repo-cache-{{ .Environment.CIRCLE_SHA1 }}
+                - repo-yarn-dependencies-{{ checksum "yarn.lock" }}
+      - run: yarn install
+      - save_cache:
+          name: "Saving yarn dependencies to cache"
+          key: repo-yarn-dependencies-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+      - save_cache:
+          paths:
+            - ~/azure-ts-static-website
+          key: repo-cache-{{ .Environment.CIRCLE_SHA1 }}-installed
       - when:
           condition: << parameters.dryrun >>
           steps:
@@ -59,8 +73,6 @@ jobs:
           keys:
             - repo-cache-{{ .Environment.CIRCLE_SHA1 }}
             - repo-yarn-dependencies-{{ checksum "yarn.lock" }}
-      - run: yarn install
-      - run: yarn bootstrap
       - save_cache:
           name: "Saving yarn dependencies to cache"
           key: repo-yarn-dependencies-{{ checksum "yarn.lock" }}
