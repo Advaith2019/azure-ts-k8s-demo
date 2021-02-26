@@ -91,7 +91,7 @@ jobs:
             . ../scripts/init.sh << parameters.env >> CircleCI
       - pulumi/login:
           version: latest    
-          cloud-url: azblob://pskarna${ENV}3se
+          cloud-url: azblob://pskarna<< parameters.env >>3se
       - run:
           name: Whitelist IP
           command: |
