@@ -66,22 +66,6 @@ jobs:
           key: repo-cache-{{ .Environment.CIRCLE_SHA1 }}
           paths:
            - ~/azure-ts-k8s-demo
-  install:
-    <<: *docker-config
-    steps:
-      - restore_cache:
-          keys:
-            - repo-cache-{{ .Environment.CIRCLE_SHA1 }}
-            - repo-yarn-dependencies-{{ checksum "yarn.lock" }}
-      - save_cache:
-          name: "Saving yarn dependencies to cache"
-          key: repo-yarn-dependencies-{{ checksum "yarn.lock" }}
-          paths:
-            - ~/.cache/yarn
-      - save_cache:
-          paths:
-            - ~/azure-ts-k8s-demo
-          key: repo-cache-{{ .Environment.CIRCLE_SHA1 }}-installed
   deploy-k8s-resource:
     parameters:
       env:
@@ -99,7 +83,7 @@ jobs:
           name: Install helm
           command: sudo curl -L https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
       - restore_cache:
-          key: repo-cache-{{ .Environment.CIRCLE_SHA1 }}-installed
+          key: repo-cache-{{ .Environment.CIRCLE_SHA1 }}
       - run:
           name: "Login to Azure"
           command: |
@@ -149,20 +133,17 @@ workflows:
   deploy-k8s-resources:
     jobs:
     - checkout
-    - install: 
-        requires:
-        - checkout
     - deploy-k8s-resource:
         name: dryrun-k8s-deploy-dev
         env: dev
         filters: *feature_filters
         dryrun: true
         requires:
-        - install
+        - checkout
     - deploy-k8s-resource:
         name: k8s-deploy-dev
         env: dev
         filters: *master_filters
         dryrun: false
         requires:
-        - install
+        - checkout
